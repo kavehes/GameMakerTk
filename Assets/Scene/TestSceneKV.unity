@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 102329134}
   m_Layer: 20
   m_Name: Body
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -221,6 +221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 126cd2680ec682c429beb3516e916633, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerNumber: 1
   headState: 0
   head: {fileID: 143984072}
   neckStart: {fileID: 1059518545}
@@ -605,7 +606,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd6922ca3f92eb4a8f3596b64c15bf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerNumber: 1
   cursorZPosition: 10
+  lama: {fileID: 0}
 --- !u!1 &504043481 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1955237596540098, guid: 58dffbabbf046bf4abad450e9f622dc5,

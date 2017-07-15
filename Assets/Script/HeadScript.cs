@@ -202,6 +202,18 @@ public class HeadScript : MonoBehaviour {
             StartCoroutine(Rewind());
         }
     }
+    /// <summary>
+    /// Eat an ennemy
+    /// </summary>
+    public bool Eat() {
+        if (grabbedObject != null) {
+            grabbedObject.GetComponent<IGrabbable>().Bite(10f);
+            Destroy(grabbedObject);
+            return true;           
+        }
+        else
+            return false;
+    }
 
     void CreateJoint(int index, Vector2 pos, Vector2 offset) {
         GameObject joint = new GameObject("Joint " + NeckNodes.Count);

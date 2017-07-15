@@ -10,6 +10,7 @@ public class LamaController : MonoBehaviour {
         Grabbing,
         CommingBack
     }
+    public int playerNumber = 1;
 
     public HeadState headState = HeadState.Attached;
     [Header("Neck")]
@@ -37,6 +38,10 @@ public class LamaController : MonoBehaviour {
     public float balanceStrength = 10f;
     public float UpDownSpeed = 5f;
 
+    [Header("Combat")]
+    public int candySize = 0;
+    public int equilibre = 5;
+
     bool FacingRight = false;
 
 
@@ -49,15 +54,15 @@ public class LamaController : MonoBehaviour {
         grounded = Physics2D.OverlapCircle(Feet.position, feetRadius,groundLayer);
         ledging = Physics2D.OverlapCircle(wallChecker.position, feetRadius, groundLayer) && !Physics2D.OverlapCircle(ledgeChecker.position, feetRadius, groundLayer);
         if (grounded) {
-            rigid.velocity =new Vector2(Input.GetAxis("Horizontal"), rigid.velocity.y);
+            rigid.velocity =new Vector2(Input.GetAxis("Horizontal_P" + playerNumber), rigid.velocity.y);
             switch (headState) {
                 case HeadState.Launched:
                     if (CanWalkOnLaunch) {
-                        headScript.ReduceFirstJoint(Mathf.Max(0, Input.GetAxis("Vertical") * Time.deltaTime) * UpDownSpeed);
+                        headScript.ReduceFirstJoint(Mathf.Max(0, Input.GetAxis("Vertical_P" + playerNumber) * Time.deltaTime) * UpDownSpeed);
                     }
                     break;
                 case HeadState.Grabbing:
-                    headScript.maxDistance -= Mathf.Max(0, Input.GetAxis("Vertical") * Time.deltaTime) * UpDownSpeed;
+                    headScript.maxDistance -= Mathf.Max(0, Input.GetAxis("Vertical_P" + playerNumber) * Time.deltaTime) * UpDownSpeed;
                     break;
             }
         }
@@ -67,7 +72,7 @@ public class LamaController : MonoBehaviour {
                     if (!ledging)
                         Swing();
                     else {
-                        if (Input.GetAxis("Vertical") > 0) {
+                        if (Input.GetAxis("Vertical_P" + playerNumber) > 0) {
                             transform.position += Vector3.up + (FacingRight? Vector3.right : Vector3.left)*1.5f;
                             headScript.DeleteJoint();
                         }
@@ -91,14 +96,14 @@ public class LamaController : MonoBehaviour {
                     Flip();
                 }
                 //Launch the head
-                if (Input.GetButtonDown("Fire1")) {
+                if (Input.GetButtonDown("A_P" + playerNumber)) {
                     head.GetComponent<Rigidbody2D>().AddForce((AimCursor.current.transform.position - transform.position).normalized * headLaunchForce);
                     head.GetComponent<Rigidbody2D>().gravityScale = 1;
                     headState = HeadState.Launched;
                 }
                 break;
             case HeadState.Launched:
-                if (Input.GetButtonDown("Fire2")) {
+                if (Input.GetButtonDown("Y_P" + playerNumber)) {
                     foreach(CircleCollider2D c in headScript.cc) {
                         c.enabled = true;
                     }
@@ -107,16 +112,23 @@ public class LamaController : MonoBehaviour {
                 }
                 break;
             case HeadState.Grabbing:
-                if (Input.GetButtonDown("Fire2")) {
+                //UnGrab
+                if (Input.GetButtonDown("Y_P" + playerNumber)) {
                     headScript.UnGrab();
+                }
+                //Eat enemy
+                else if(Input.GetButtonDown("B_P" + playerNumber)) {
+                    if (headScript.Eat()) {
+
+                    }
                 }
                 break;
         }
 	}
 
     void Swing() {
-        rigid.AddForce(new Vector2(Input.GetAxis("Horizontal") * balanceStrength, 0));
-        headScript.maxDistance -= headScript.maxDistance - Input.GetAxis("Vertical") * Time.deltaTime * UpDownSpeed < neckMaxLength ? Input.GetAxis("Vertical") * Time.deltaTime * UpDownSpeed : 0;
+        rigid.AddForce(new Vector2(Input.GetAxis("Horizontal_P" + playerNumber) * balanceStrength, 0));
+        headScript.maxDistance -= headScript.maxDistance - Input.GetAxis("Vertical_P" + playerNumber) * Time.deltaTime * UpDownSpeed < neckMaxLength ? Input.GetAxis("Vertical_P" + playerNumber) * Time.deltaTime * UpDownSpeed : 0;
     }
 
     void Flip() {
