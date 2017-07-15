@@ -21,11 +21,11 @@ GameObject:
   - component: {fileID: 4565136535178284}
   - component: {fileID: 50372022537323798}
   - component: {fileID: 114561934611082374}
-  - component: {fileID: 114122896416933622}
   - component: {fileID: 212366090370390756}
   - component: {fileID: 61735372451172944}
   - component: {fileID: 95914845295833588}
-  m_Layer: 0
+  - component: {fileID: 114219217099747450}
+  m_Layer: 10
   m_Name: BasicEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39,7 +39,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1864889821278238}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.59, y: 0.5, z: 0.47851562}
+  m_LocalPosition: {x: -3.52, y: 1.89, z: 0.47851562}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -107,7 +107,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114122896416933622
+--- !u!114 &114219217099747450
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -115,10 +115,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 1864889821278238}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6139e3431cb2d2b4dbbd0dbd0d721dcd, type: 3}
+  m_Script: {fileID: 11500000, guid: a0400a6d8918a234cbe4a8e2f954f339, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveDistance: 2
+  Speed: 0.5
+  stickedCollider: {fileID: 0}
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  contactFilter:
+    useTriggers: 0
+    useLayerMask: 0
+    useDepth: 1
+    useOutsideDepth: 0
+    useNormalAngle: 0
+    useOutsideNormalAngle: 0
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 1
+    minDepth: 0
+    maxDepth: 0.3
+    minNormalAngle: 0
+    maxNormalAngle: 0
 --- !u!114 &114561934611082374
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -165,7 +183,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 64bfbc206f2f251419154b6b4e274826, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 1}
