@@ -31,6 +31,8 @@ public class Enemy : MonoBehaviour, IGrabbable {
     protected Action currentAction;
     protected Action grabReaction;
 
+    bool changed = false;
+
     // Use this for initialization
     protected void Start () {
         life = GetComponent<Life>();
@@ -41,6 +43,7 @@ public class Enemy : MonoBehaviour, IGrabbable {
 
     // Update is called once per frame
     protected void FixedUpdate() {
+        changed = false;
         if (!thrown && currentAction != null)
             currentAction();
         if (stickedCollider) {
@@ -49,7 +52,8 @@ public class Enemy : MonoBehaviour, IGrabbable {
             stickedLastPosition = stickedCollider.transform.position;
             stickedLastRotation = stickedCollider.transform.rotation;
         }
-        StickToCollider();
+        if(!changed)
+            StickToCollider();
         return;
 	}
 
@@ -110,6 +114,7 @@ public class Enemy : MonoBehaviour, IGrabbable {
     }
 
     void StickToCollider(bool type = true, bool front = false) {
+        changed = true;
         if (stickedCollider == null)
             return;
         Vector2 origin;
@@ -155,7 +160,7 @@ public class Enemy : MonoBehaviour, IGrabbable {
             stickedLastPosition = stickedCollider.transform.position;
             stickedLastRotation = stickedCollider.transform.rotation;
             rigid.gravityScale = 0;
-            StickToCollider(false);
+            //StickToCollider(false);
             //Debug.Log("Sticked collider: " + coll.gameObject);
             thrown = false;
         }
