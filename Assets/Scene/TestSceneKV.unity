@@ -459,7 +459,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   triggerList: f7e1664c
   useOtherObject: 0
-  valueGuid: 0dcaca2b87167c41ba7530bcced0445e
+  valueGuid: fcf44ba7b78e0e428bf8420ef216ddf4
   bankName: main
   loadAsynchronous: 0
   decodeBank: 0
@@ -520,7 +520,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4565136535178284, guid: fcd03609f08f23d46bc9e12922b33093, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 4.38
+      value: 5.61
       objectReference: {fileID: 0}
     - target: {fileID: 4565136535178284, guid: fcd03609f08f23d46bc9e12922b33093, type: 2}
       propertyPath: m_LocalPosition.z

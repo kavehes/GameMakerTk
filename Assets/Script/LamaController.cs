@@ -49,18 +49,26 @@ public class LamaController : MonoBehaviour , IHittable {
 
     bool cooldown;
 
+    Animator anim;
+
     public bool FacingRight = false;
 
 
     void Start() {
+        anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody2D>();
         headScript = head.GetComponent<HeadScript>();
     }
 
     void FixedUpdate() {
+        if (grounded && !Physics2D.OverlapCircle(Feet.position, feetRadius, groundLayer))
+            anim.SetTrigger("Fell");
+
         grounded = Physics2D.OverlapCircle(Feet.position, feetRadius,groundLayer);
         ledging = Physics2D.OverlapCircle(wallChecker.position, feetRadius, groundLayer) && !Physics2D.OverlapCircle(ledgeChecker.position, feetRadius, groundLayer);
 
+        anim.SetFloat("Speed", Mathf.Abs(rigid.velocity.x));
+        anim.SetBool("IsGrounded", grounded);
         if (grounded) {
             if(!cooldown)
                 rigid.velocity =new Vector2(Input.GetAxis("Horizontal_P" + playerNumber)*Speed, rigid.velocity.y);
@@ -117,6 +125,7 @@ public class LamaController : MonoBehaviour , IHittable {
                 if (Input.GetButtonDown("A_P" + playerNumber)) {
                     head.GetComponent<Rigidbody2D>().AddForce((cursor.transform.position - neckStart.transform.position).normalized * headLaunchForce);
                     head.GetComponent<Rigidbody2D>().gravityScale = 1;
+                    AkSoundEngine.PostEvent("Play_Lancer", gameObject);
                     headScript.EnableJoint(true);
                     headState = HeadState.Launched;
                 }
