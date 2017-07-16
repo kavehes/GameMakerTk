@@ -102,25 +102,36 @@ public class Enemy : MonoBehaviour, IGrabbable {
     void Move() {
         if (stickedCollider != null) {
             float movement = Speed;
-            rigid.velocity = (Vector2)moveVector * movement;}
+            rigid.velocity = (Vector2)moveVector * movement;
+            Collider2D col = Physics2D.OverlapPoint(collider.bounds.center + transform.right * collider.bounds.size.magnitude);
+            if (col != null && (1 << col.gameObject.layer & wallLayer.value) != 0)
+                StickToCollider(false, true);
+        }
     }
 
-    void StickToCollider() {
+    void StickToCollider(bool type = true, bool front = false) {
         if (stickedCollider == null)
             return;
-        Vector2 direction = (stickedCollider.bounds.center - collider.bounds.center);
-        float distance = Vector3.Distance(stickedCollider.bounds.center, collider.bounds.center);
-        RaycastHit2D[] hit = new RaycastHit2D[10];
-        int n = collider.Raycast(direction, hit, distance, wallLayer);
+        Vector2 origin;
+        if (type) origin = transform.position - 0.1f * transform.up;
+        else origin = collider.bounds.center;
+        if (stickedCollider.OverlapPoint(origin))
+            return;
+        Vector2 direction;
+        if (!front) direction = ((Vector2)stickedCollider.bounds.center - origin);
+        else direction = transform.right;
+        float distance = Vector3.Distance(origin, stickedCollider.bounds.center);
+        RaycastHit2D[] hit = Physics2D.RaycastAll(origin,direction, distance, wallLayer);
         int found = -1;
-        for(int i=0; i<n; i++) {
+        for(int i=0; i<hit.Length; i++) {
             if(hit[i] == stickedCollider) {
                 found = i;
                 break;
             }
         }
 
-        if (found == -1 || stickedCollider.Distance(collider).distance>collider.bounds.size.magnitude) {
+        if (found == -1) {
+            Debug.Log("quit");
             stickedCollider = null;
             lastNormal = new Vector2();
             rigid.gravityScale = 1;
@@ -137,22 +148,24 @@ public class Enemy : MonoBehaviour, IGrabbable {
         lastNormal = hit[found].normal;
     }
 
+
     void OnCollisionEnter2D(Collision2D coll) {
         if((wallLayer.value & 1<<coll.collider.gameObject.layer) != 0) {
             stickedCollider = coll.collider;
             stickedLastPosition = stickedCollider.transform.position;
             stickedLastRotation = stickedCollider.transform.rotation;
             rigid.gravityScale = 0;
+            StickToCollider(false);
             //Debug.Log("Sticked collider: " + coll.gameObject);
             thrown = false;
         }
     }
 
     void OnCollisionExit2D(Collision2D coll) {
-        /*if (coll.collider == stickedCollider) {
+        if (coll.collider == stickedCollider) {
             stickedCollider = null;
             rigid.gravityScale = 1;
-        }*/
+        }
     }
 
     //Actions
