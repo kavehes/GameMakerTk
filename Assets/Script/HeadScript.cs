@@ -19,6 +19,8 @@ public class HeadScript : MonoBehaviour {
     public int neckLayer;
     public LayerMask layersToCheck;
 
+    public float throwStrength = 7000;
+
     [Header("Grabbing")]
     GameObject grabbedObject;
 
@@ -35,61 +37,62 @@ public class HeadScript : MonoBehaviour {
 
     void LateUpdate() {
         //HARDFIX
-        if(headState() == LamaController.HeadState.Attached && NeckNodes.Count > 1) {
+        if (headState() == LamaController.HeadState.Attached && NeckNodes.Count > 1) {
             NeckNodes[0].connectedBody = lama.GetComponent<Rigidbody2D>();
             NeckNodes[0].connectedAnchor = NeckNodes[NeckNodes.Count - 1].connectedAnchor;
-            for(int i = 1; i < NeckNodes.Count; i++) {
+            for (int i = 1; i < NeckNodes.Count; i++) {
                 Destroy(NeckNodes[i].gameObject);
                 NeckNodes.RemoveAt(i);
                 CollidingPoint.RemoveAt(i - 1);
             }
         }
-        
-        SimplifyJoints();
-        for (int i = 0; i < NeckNodes.Count - 1; i++) {
-            Transform childPos = NeckNodes[i].connectedBody.transform;
-            RaycastHit2D rchit = Physics2D.Raycast(NeckNodes[i].transform.position, (childPos.position - NeckNodes[i].transform.position).normalized, (childPos.position - NeckNodes[i].transform.position).magnitude, layersToCheck);
+        else if(headState() != LamaController.HeadState.Attached){
+            SimplifyJoints();
+            for (int i = 0; i < NeckNodes.Count - 1; i++) {
+                Transform childPos = NeckNodes[i].connectedBody.transform;
+                RaycastHit2D rchit = Physics2D.Raycast(NeckNodes[i].transform.position, (childPos.position - NeckNodes[i].transform.position).normalized, (childPos.position - NeckNodes[i].transform.position).magnitude, layersToCheck);
 
-            if (rchit.collider != null && rchit.collider.gameObject != childPos.gameObject) {
-                Debug.Log("Collided with " + rchit.collider.name);
-                CreateJoint(i + 1, rchit.point, getRectOffset(rchit.collider, rchit.point));
-                break;
+                if (rchit.collider != null && rchit.collider.gameObject != childPos.gameObject) {
+                    CreateJoint(i + 1, rchit.point, getRectOffset(rchit.collider, rchit.point));
+                    break;
+                }
             }
-        }
             RaycastHit2D hit = Physics2D.Raycast(NeckNodes[NeckNodes.Count - 1].transform.position, Body.transform.position - NeckNodes[NeckNodes.Count - 1].transform.position, (Body.transform.position - NeckNodes[NeckNodes.Count - 1].transform.position).magnitude, layersToCheck);
 
             if (hit.collider != null && hit.collider.gameObject != Body) {
-
-            Debug.Log("Collided with " + hit.collider.name);
-            CreateJoint(NeckNodes.Count, hit.point, getRectOffset(hit.collider,hit.point));
-            NeckNodes[NeckNodes.Count - 1].anchor = NeckNodes[NeckNodes.Count - 2].anchor;
+                CreateJoint(NeckNodes.Count, hit.point, getRectOffset(hit.collider, hit.point));
+                NeckNodes[NeckNodes.Count - 1].anchor = NeckNodes[NeckNodes.Count - 2].anchor;
                 NeckNodes[NeckNodes.Count - 2].anchor = Vector2.zero;
             }
 
-        if (headState() == LamaController.HeadState.CommingBack || headState() == LamaController.HeadState.Launched) {
-            NeckNodes[0].distance = maxDistance - GetDistance(1, NeckNodes.Count);
-        }
+            if (headState() == LamaController.HeadState.CommingBack || headState() == LamaController.HeadState.Launched) {
+                NeckNodes[0].distance = maxDistance - GetDistance(1, NeckNodes.Count);
+            }
 
-        else if(headState() == LamaController.HeadState.Grabbing) {
-            if (grabbedObject != null) {
-                transform.position = grabbedObject.transform.position;
-                rigid.velocity = Vector2.zero;
-                
-                NeckNodes[NeckNodes.Count-1].distance = maxDistance - GetDistance(0,NeckNodes.Count-1);
-                if(GetDistance(0, NeckNodes.Count) <= lama.neckSize*2f) {
-                    Debug.Log("Ungrabbing");
-                    foreach(CircleCollider2D c in cc) {
-                        c.enabled = true;
+            else if (headState() == LamaController.HeadState.Grabbing) {
+                if (grabbedObject != null) {
+                    //transform.position = grabbedObject.transform.position;
+                    transform.position = grabbedObject.GetComponent<BoxCollider2D>().bounds.center;
+                    rigid.velocity = Vector2.zero;
+
+                    NeckNodes[NeckNodes.Count - 1].distance = maxDistance - GetDistance(0, NeckNodes.Count - 1);
+                    if (GetDistance(0, NeckNodes.Count) <= lama.neckSize * 2f) {
+                        Debug.Log("Ungrabbing");
+                        foreach (CircleCollider2D c in cc) {
+                            c.enabled = true;
+                        }
+                        grabbedObject.GetComponent<IGrabbable>().UnGrab();
+                        lama.headState = LamaController.HeadState.CommingBack;
+                        StartCoroutine(Rewind());
                     }
-                    grabbedObject.GetComponent<IGrabbable>().UnGrab();
+                }
+                else {
+                    Debug.LogError("No grabedObject");
                     lama.headState = LamaController.HeadState.CommingBack;
                     StartCoroutine(Rewind());
                 }
             }
-            else
-                Debug.LogError("No grabedObject");
         }
-
 
         SimplifyJoints();
     }
@@ -108,12 +111,19 @@ public class HeadScript : MonoBehaviour {
     /// Delete the last joint
     /// </summary>
     public void DeleteJoint() {
-        int index = NeckNodes.Count - 1;
-        NeckNodes[index - 1].connectedBody = NeckNodes[index].connectedBody;
-        NeckNodes[index - 1].connectedAnchor = NeckNodes[index].connectedAnchor;
-        Destroy(NeckNodes[index].gameObject);
-        NeckNodes.RemoveAt(index);
-        CollidingPoint.RemoveAt(index - 1);
+        if (NeckNodes.Count > 1) {
+            int index = NeckNodes.Count - 1;
+            NeckNodes[index - 1].connectedBody = NeckNodes[index].connectedBody;
+            NeckNodes[index - 1].connectedAnchor = NeckNodes[index].connectedAnchor;
+            Destroy(NeckNodes[index].gameObject);
+            NeckNodes.RemoveAt(index);
+            CollidingPoint.RemoveAt(index - 1);
+        }
+    }
+
+    public void ShortenDistance(float value) {
+        maxDistance = GetDistance(0, NeckNodes.Count);
+        maxDistance -= value;
     }
 
     LamaController.HeadState headState() {
@@ -208,11 +218,24 @@ public class HeadScript : MonoBehaviour {
     public bool Eat() {
         if (grabbedObject != null) {
             grabbedObject.GetComponent<IGrabbable>().Bite(10f);
-            Destroy(grabbedObject);
+            grabbedObject.SetActive(false);
             return true;           
         }
         else
             return false;
+    }
+
+    public void Throw(Vector2 direction) {
+        if(grabbedObject != null) {
+            Debug.Log("Throwing stuff");
+            grabbedObject.SetActive(true);
+            grabbedObject.transform.position = transform.position;
+            grabbedObject.GetComponent<IGrabbable>().Throw((Vector3)direction, throwStrength);
+        }
+        else {
+            Debug.Log("Wait what");
+
+        }
     }
 
     void CreateJoint(int index, Vector2 pos, Vector2 offset) {
@@ -226,7 +249,6 @@ public class HeadScript : MonoBehaviour {
         cc2d.radius = 0.25f;
         */
         CollidingPoint.Insert(index-1,pos);
-        Debug.Log("Corresponding Cpoint " + CollidingPoint[index - 1]);
 
         Rigidbody2D rig = joint.AddComponent<Rigidbody2D>();
         rig.isKinematic = true;
