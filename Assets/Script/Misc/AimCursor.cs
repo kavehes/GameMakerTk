@@ -39,7 +39,7 @@ public class AimCursor : MonoBehaviour {
         }
         //transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * cursorZPosition;
         if ((Mathf.Abs(Input.GetAxis("Horizontal2_P" + playerNumber)) + Mathf.Abs(Input.GetAxis("Vertical2_P" + playerNumber))) > 0.5f)
-            offset = new Vector3(Input.GetAxis("Horizontal2_P" + playerNumber), Input.GetAxis("Vertical2_P" + playerNumber), 0).normalized*2f;
+            offset = new Vector3(Input.GetAxis("Horizontal2_P" + playerNumber), Input.GetAxis("Vertical2_P" + playerNumber), 0).normalized*4f;
         transform.position = lama.neckStart.transform.position + offset;
     }
 }

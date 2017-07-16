@@ -47,7 +47,7 @@ public class LamaController : MonoBehaviour {
     public int equilibre = 5;
     public AimCursor cursor;
 
-    bool FacingRight = false;
+    public bool FacingRight = false;
 
 
     void Start() {
@@ -72,6 +72,7 @@ public class LamaController : MonoBehaviour {
                     headScript.ShortenDistance(Mathf.Max(0, Input.GetAxis("Vertical_P" + playerNumber) * Time.deltaTime) * UpDownSpeed);
                     break;
                 case HeadState.Attached:
+                    headScript.EnableJoint(false);
                     if(Input.GetButtonDown("B_P" + playerNumber)) {
                         Debug.Log("Hey");
                         headScript.Throw(cursor.aimDirection());
@@ -105,14 +106,15 @@ public class LamaController : MonoBehaviour {
     void Update() {
         switch (headState) {
             case HeadState.Attached:
-                head.transform.position = (cursor.transform.position - transform.position).normalized * neckSize + neckStart.position;
+                head.transform.position = (cursor.transform.position - neckStart.transform.position).normalized * neckSize + neckStart.position;
                 if (cursor.transform.position.x > transform.position.x && !FacingRight || cursor.transform.position.x < transform.position.x && FacingRight) {
                     Flip();
                 }
                 //Launch the head
                 if (Input.GetButtonDown("A_P" + playerNumber)) {
-                    head.GetComponent<Rigidbody2D>().AddForce((cursor.transform.position - transform.position).normalized * headLaunchForce);
+                    head.GetComponent<Rigidbody2D>().AddForce((cursor.transform.position - neckStart.transform.position).normalized * headLaunchForce);
                     head.GetComponent<Rigidbody2D>().gravityScale = 1;
+                    headScript.EnableJoint(true);
                     headState = HeadState.Launched;
                 }
                 break;
