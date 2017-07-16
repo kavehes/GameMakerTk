@@ -23,9 +23,11 @@ public class LamaController : MonoBehaviour {
     HeadScript headScript;
     [Header("Head launching")]
     public float headLaunchForce = 7000;
+
     [Header("Body")]
     public bool grounded;
     public bool ledging;
+    public float ledgingStrength;
     public Transform ledgeChecker;
     public Transform wallChecker;
     public Transform Feet;
@@ -34,13 +36,16 @@ public class LamaController : MonoBehaviour {
     public bool CanWalkOnLaunch = true;
     bool CommitToLedge;
     Rigidbody2D rigid;
+
     [Header("Movement")]
     public float balanceStrength = 10f;
+    public float Speed = 3f;
     public float UpDownSpeed = 5f;
 
     [Header("Combat")]
     public int candySize = 0;
     public int equilibre = 5;
+    public AimCursor cursor;
 
     bool FacingRight = false;
 
@@ -53,16 +58,24 @@ public class LamaController : MonoBehaviour {
     void FixedUpdate() {
         grounded = Physics2D.OverlapCircle(Feet.position, feetRadius,groundLayer);
         ledging = Physics2D.OverlapCircle(wallChecker.position, feetRadius, groundLayer) && !Physics2D.OverlapCircle(ledgeChecker.position, feetRadius, groundLayer);
+
         if (grounded) {
-            rigid.velocity =new Vector2(Input.GetAxis("Horizontal_P" + playerNumber), rigid.velocity.y);
+            rigid.velocity =new Vector2(Input.GetAxis("Horizontal_P" + playerNumber)*Speed, rigid.velocity.y);
             switch (headState) {
                 case HeadState.Launched:
                     if (CanWalkOnLaunch) {
-                        headScript.ReduceFirstJoint(Mathf.Max(0, Input.GetAxis("Vertical_P" + playerNumber) * Time.deltaTime) * UpDownSpeed);
+                        headScript.ShortenDistance(Mathf.Max(0, Input.GetAxis("Vertical_P" + playerNumber) * Time.deltaTime) * UpDownSpeed);
                     }
+                    else rigid.velocity = Vector2.zero;
                     break;
                 case HeadState.Grabbing:
-                    headScript.maxDistance -= Mathf.Max(0, Input.GetAxis("Vertical_P" + playerNumber) * Time.deltaTime) * UpDownSpeed;
+                    headScript.ShortenDistance(Mathf.Max(0, Input.GetAxis("Vertical_P" + playerNumber) * Time.deltaTime) * UpDownSpeed);
+                    break;
+                case HeadState.Attached:
+                    if(Input.GetButtonDown("B_P" + playerNumber)) {
+                        Debug.Log("Hey");
+                        headScript.Throw(cursor.aimDirection());
+                    }
                     break;
             }
         }
@@ -72,8 +85,9 @@ public class LamaController : MonoBehaviour {
                     if (!ledging)
                         Swing();
                     else {
-                        if (Input.GetAxis("Vertical_P" + playerNumber) > 0) {
-                            transform.position += Vector3.up + (FacingRight? Vector3.right : Vector3.left)*1.5f;
+                        if (Input.GetAxis("Vertical_P" + playerNumber) > 0.5f) {
+                            rigid.AddForce((Vector2.up) * ledgingStrength);
+                            //transform.position += Vector3.up + (FacingRight? Vector3.right : Vector3.left)*1.5f;
                             headScript.DeleteJoint();
                         }
                         else {
@@ -91,13 +105,13 @@ public class LamaController : MonoBehaviour {
     void Update() {
         switch (headState) {
             case HeadState.Attached:
-                head.transform.position = (AimCursor.current.transform.position - transform.position).normalized * neckSize + neckStart.position;
-                if (AimCursor.current.transform.position.x > transform.position.x && !FacingRight || AimCursor.current.transform.position.x < transform.position.x && FacingRight) {
+                head.transform.position = (cursor.transform.position - transform.position).normalized * neckSize + neckStart.position;
+                if (cursor.transform.position.x > transform.position.x && !FacingRight || cursor.transform.position.x < transform.position.x && FacingRight) {
                     Flip();
                 }
                 //Launch the head
                 if (Input.GetButtonDown("A_P" + playerNumber)) {
-                    head.GetComponent<Rigidbody2D>().AddForce((AimCursor.current.transform.position - transform.position).normalized * headLaunchForce);
+                    head.GetComponent<Rigidbody2D>().AddForce((cursor.transform.position - transform.position).normalized * headLaunchForce);
                     head.GetComponent<Rigidbody2D>().gravityScale = 1;
                     headState = HeadState.Launched;
                 }
@@ -119,7 +133,8 @@ public class LamaController : MonoBehaviour {
                 //Eat enemy
                 else if(Input.GetButtonDown("B_P" + playerNumber)) {
                     if (headScript.Eat()) {
-
+                        head.GetComponent<HeadScript>().StartCoroutine(head.GetComponent<HeadScript>().Rewind());
+                        headState = HeadState.CommingBack;
                     }
                 }
                 break;
