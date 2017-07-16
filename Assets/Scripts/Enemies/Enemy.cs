@@ -82,6 +82,7 @@ public class Enemy : MonoBehaviour, IGrabbable {
 
     public virtual void Throw(Vector3 direction, float strength) {
         rigid.AddForce(direction * strength, ForceMode2D.Force);
+        rigid.AddTorque(5);
         thrown = true;
         rigid.gravityScale = 1;
     }
@@ -163,7 +164,12 @@ public class Enemy : MonoBehaviour, IGrabbable {
 
 
     void OnCollisionEnter2D(Collision2D coll) {
-        if((wallLayer.value & 1<<coll.collider.gameObject.layer) != 0 && collTimer>0.5f) {
+        IHittable hitted = coll.gameObject.GetComponent<IHittable>();
+        if (hitted != null && thrown) {
+            hitted.Hit(size);
+            thrown = false;
+        }
+        else if((wallLayer.value & 1<<coll.collider.gameObject.layer) != 0 && collTimer>0.5f) {
             Debug.Log("collide");
             changed = true;
             stickedCollider = coll.collider;
