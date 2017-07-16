@@ -135,7 +135,7 @@ MonoBehaviour:
   size: 3
   wallLayer:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 257
 --- !u!212 &212385343561920322
 SpriteRenderer:
   m_ObjectHideFlags: 1

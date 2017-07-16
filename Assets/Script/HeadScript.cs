@@ -46,7 +46,7 @@ public class HeadScript : MonoBehaviour {
                 CollidingPoint.RemoveAt(i - 1);
             }
         }
-        else if(headState() != LamaController.HeadState.Attached){
+        if(headState() != LamaController.HeadState.Attached){
             SimplifyJoints();
             if (headState() != LamaController.HeadState.CommingBack) {
                 for (int i = 0; i < NeckNodes.Count - 1; i++) {

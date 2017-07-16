@@ -120,9 +120,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Speed: 1.5
   stickedCollider: {fileID: 0}
+  size: 1
   wallLayer:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 257
 --- !u!114 &114561934611082374
 MonoBehaviour:
   m_ObjectHideFlags: 1
