@@ -11,7 +11,7 @@ public class Spawner : MonoBehaviour {
 
     List<GameObject> spawned = new List<GameObject>();
     public int total = 10;
-    public float YLimit = -20;
+    public Transform YLimit;
 
     float timer = 0;
 	
@@ -31,7 +31,7 @@ public class Spawner : MonoBehaviour {
                 spawned.RemoveAt(i);
                 i--;
             }
-            else if (spawned[i].transform.position.y < YLimit) {
+            else if (spawned[i].transform.position.y < YLimit.position.y) {
                 Destroy(spawned[i].gameObject);
                 spawned.RemoveAt(i);
                 i--;

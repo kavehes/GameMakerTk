@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 212385343561920322}
   - component: {fileID: 61180473952631530}
   - component: {fileID: 95047219477601864}
-  - component: {fileID: 114553144839483610}
+  - component: {fileID: 114882488050715830}
   m_Layer: 11
   m_Name: BasicEnemy3
   m_TagString: Untagged
@@ -39,7 +39,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1536233451813474}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.800428, y: 6.632437, z: 0.47851562}
+  m_LocalPosition: {x: -15.915871, y: -3.5774975, z: 0.47851562}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_Children: []
   m_Father: {fileID: 0}
@@ -119,7 +119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxLife: 10
---- !u!114 &114553144839483610
+--- !u!114 &114882488050715830
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -127,15 +127,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1536233451813474}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0400a6d8918a234cbe4a8e2f954f339, type: 3}
+  m_Script: {fileID: 11500000, guid: a13815acc73d5fc4ea6318057382fe6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 1.5
+  Speed: 3
   stickedCollider: {fileID: 0}
   size: 3
   wallLayer:
     serializedVersion: 2
     m_Bits: 257
+  fleeingTime: 4
 --- !u!212 &212385343561920322
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -206,5 +206,5 @@ MonoBehaviour:
   enemy2: {fileID: 1948216117331502, guid: 1e4be8eeb22976445ae2f743dac5ed17, type: 2}
   enemy3: {fileID: 1536233451813474, guid: 11a9c08f13983e44bb08cc47aa8e1e32, type: 2}
   enemy4: {fileID: 1938949092283676, guid: d6801ed5c310fa144b31f724c320eb0e, type: 2}
-  total: 10
+  total: 100
   YLimit: -20
