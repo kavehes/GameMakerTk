@@ -168,6 +168,7 @@ public class Enemy : MonoBehaviour, IGrabbable {
         if (hitted != null && thrown) {
             hitted.Hit(size);
             thrown = false;
+            AkSoundEngine.PostEvent("Play_Hit", coll.gameObject);
         }
         else if((wallLayer.value & 1<<coll.collider.gameObject.layer) != 0 && collTimer>0.5f) {
             Debug.Log("collide");
