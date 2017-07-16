@@ -116,7 +116,7 @@ public class Enemy : MonoBehaviour, IGrabbable {
             }
         }
 
-        if (found == -1 || hit[found].distance > 1.0f) {
+        if (found == -1) {
             stickedCollider = null;
             lastNormal = new Vector2();
             rigid.gravityScale = 1;
@@ -141,6 +141,13 @@ public class Enemy : MonoBehaviour, IGrabbable {
             rigid.gravityScale = 0;
             //Debug.Log("Sticked collider: " + coll.gameObject);
             thrown = false;
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D coll) {
+        if (coll.collider == stickedCollider) {
+            stickedCollider = null;
+            rigid.gravityScale = 1;
         }
     }
 
