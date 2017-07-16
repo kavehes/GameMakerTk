@@ -10,7 +10,7 @@ public class Enemy : MonoBehaviour, IGrabbable {
     public float Speed = 3;
     public Collider2D stickedCollider;
     int side = 0;
-    int size = 1;
+    public int size = 1;
     public LayerMask wallLayer;
 
     Vector2 lastNormal;
@@ -166,7 +166,7 @@ public class Enemy : MonoBehaviour, IGrabbable {
     void OnCollisionEnter2D(Collision2D coll) {
         IHittable hitted = coll.gameObject.GetComponent<IHittable>();
         if (hitted != null && thrown) {
-            hitted.Hit(size);
+            hitted.Hit(size, gameObject);
             thrown = false;
             AkSoundEngine.PostEvent("Play_Hit", coll.gameObject);
         }

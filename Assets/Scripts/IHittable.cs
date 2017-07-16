@@ -4,5 +4,5 @@ using UnityEngine;
 
 interface IHittable {
 
-    void Hit(int size);
+    void Hit(int size, GameObject obj);
 }
