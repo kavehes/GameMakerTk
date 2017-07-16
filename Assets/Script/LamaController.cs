@@ -75,6 +75,7 @@ public class LamaController : MonoBehaviour , IHittable {
             switch (headState) {
                 case HeadState.Launched:
                     if (CanWalkOnLaunch) {
+                        //headScript.MaxOnlyManager(true, true, false);// Don't touch this !!
                         headScript.ShortenDistance(Mathf.Max(0, Input.GetAxis("Vertical_P" + playerNumber) * Time.deltaTime) * UpDownSpeed);
                     }
                     else if(!cooldown) rigid.velocity = Vector2.zero;
@@ -123,6 +124,7 @@ public class LamaController : MonoBehaviour , IHittable {
                 }
                 //Launch the head
                 if (Input.GetButtonDown("A_P" + playerNumber)) {
+                    head.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
                     head.GetComponent<Rigidbody2D>().AddForce((cursor.transform.position - neckStart.transform.position).normalized * headLaunchForce);
                     head.GetComponent<Rigidbody2D>().gravityScale = 1;
                     AkSoundEngine.PostEvent("Play_Lancer", gameObject);
