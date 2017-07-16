@@ -168,7 +168,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1219703003083994}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.757, y: -0.56, z: 0}
+  m_LocalPosition: {x: -0.757, y: 0.131, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4588169615972898}
@@ -220,7 +220,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1778197282123000}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.4149168, y: 0.89, z: 0}
+  m_LocalPosition: {x: -21.81, y: 9.14, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4224727586274046}
@@ -440,10 +440,10 @@ MonoBehaviour:
   neckStart: {fileID: 4096241825145574}
   neckSize: 1
   neckMaxLength: 15
-  headLaunchForce: 700
+  headLaunchForce: 1400
   grounded: 0
   ledging: 0
-  ledgingStrength: 10000
+  ledgingStrength: 15000
   ledgeChecker: {fileID: 4983814931538840}
   wallChecker: {fileID: 4200300509774812}
   Feet: {fileID: 4266753427000358}
@@ -473,6 +473,7 @@ MonoBehaviour:
   playerNumber: 1
   cursorZPosition: 10
   lama: {fileID: 0}
+  offset: {x: 0, y: 0, z: 0}
 --- !u!114 &114591993582369546
 MonoBehaviour:
   m_ObjectHideFlags: 1
