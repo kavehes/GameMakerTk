@@ -35,7 +35,7 @@ public class HeadScript : MonoBehaviour {
         NeckNodes[0].distance = maxDistance;
     }
 
-    void LateUpdate() {
+    void FixedUpdate() {
         //HARDFIX
         if (headState() == LamaController.HeadState.Attached && NeckNodes.Count > 1) {
             NeckNodes[0].connectedBody = lama.GetComponent<Rigidbody2D>();
@@ -73,12 +73,15 @@ public class HeadScript : MonoBehaviour {
             }
 
             else if (headState() == LamaController.HeadState.Grabbing) {
+                MaxOnlyManager(false, true, true);
+                maxDistance = Mathf.Clamp(maxDistance, lama.neckSize, lama.neckMaxLength);
                 if (grabbedObject != null) {
                     //transform.position = grabbedObject.transform.position;
                     transform.position = grabbedObject.GetComponent<BoxCollider2D>().bounds.center;
                     rigid.velocity = Vector2.zero;
 
                     NeckNodes[NeckNodes.Count - 1].distance = maxDistance - GetDistance(0, NeckNodes.Count - 1);
+                    NeckNodes[NeckNodes.Count - 1].distance = Mathf.Clamp(NeckNodes[NeckNodes.Count - 1].distance, lama.neckSize, lama.neckMaxLength);
                     if (GetDistance(0, NeckNodes.Count) <= lama.neckSize * 2f) {
                         Debug.Log("Ungrabbing");
                         foreach (CircleCollider2D c in cc) {
@@ -94,6 +97,14 @@ public class HeadScript : MonoBehaviour {
                     lama.headState = LamaController.HeadState.CommingBack;
                     StartCoroutine(Rewind());
                 }
+            }
+        }
+        if (NeckNodes.Count > 1) {
+            if (lama.transform.position.x < NeckNodes[NeckNodes.Count - 1].transform.position.x && !lama.FacingRight) {
+                lama.Flip();
+            }
+            if (lama.transform.position.x > NeckNodes[NeckNodes.Count - 1].transform.position.x && lama.FacingRight) {
+                lama.Flip();
             }
         }
 
@@ -131,6 +142,17 @@ public class HeadScript : MonoBehaviour {
     public void ShortenDistance(float value) {
         maxDistance = GetDistance(0, NeckNodes.Count);
         maxDistance -= value;
+    }
+
+    void MaxOnlyManager(bool first,bool middle, bool last) {
+        for(int i = 0; i < NeckNodes.Count; i++) {
+            if (i == 0)
+                NeckNodes[i].maxDistanceOnly = first;
+            if(i == NeckNodes.Count -1)
+                NeckNodes[i].maxDistanceOnly = last;
+            else
+                NeckNodes[i].maxDistanceOnly = middle;
+        }
     }
 
     LamaController.HeadState headState() {
@@ -176,7 +198,7 @@ public class HeadScript : MonoBehaviour {
                 }
         }
         //Last case
-        if (NeckNodes.Count > 2) {
+        if (NeckNodes.Count > 1) {
             int ii = NeckNodes.Count - 2;
             bool ccLeft = isLeft(NeckNodes[ii].transform.position, NeckNodes[ii + 1].transform.position, CollidingPoint[ii]);
             if (ccLeft != isLeft(NeckNodes[ii].transform.position, NeckNodes[ii + 1].transform.position, (Vector2)Body.transform.position)) {

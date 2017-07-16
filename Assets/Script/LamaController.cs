@@ -148,7 +148,7 @@ public class LamaController : MonoBehaviour {
         headScript.maxDistance -= headScript.maxDistance - Input.GetAxis("Vertical_P" + playerNumber) * Time.deltaTime * UpDownSpeed < neckMaxLength ? Input.GetAxis("Vertical_P" + playerNumber) * Time.deltaTime * UpDownSpeed : 0;
     }
 
-    void Flip() {
+    public void Flip() {
         Vector3 temp = transform.localScale;
         temp.x *= -1;
         transform.localScale = temp;
