@@ -11,7 +11,7 @@ public class AimCursor : MonoBehaviour {
 
     SpriteRenderer spriteRen;
 
-    Vector3 offset;
+    public Vector3 offset;
 
     void Start() {
         spriteRen = GetComponent<SpriteRenderer>();

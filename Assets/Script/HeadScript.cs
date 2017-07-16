@@ -153,7 +153,7 @@ public class HeadScript : MonoBehaviour {
         maxDistance -= value;
     }
 
-    void MaxOnlyManager(bool first,bool middle, bool last) {
+    public void MaxOnlyManager(bool first,bool middle, bool last) {
         for(int i = 0; i < NeckNodes.Count; i++) {
             if (i == 0)
                 NeckNodes[i].maxDistanceOnly = first;
@@ -251,6 +251,7 @@ public class HeadScript : MonoBehaviour {
             }
             grabbedObject.GetComponent<IGrabbable>().UnGrab();
             lama.headState = LamaController.HeadState.CommingBack;
+            grabbedObject = null;
             StartCoroutine(Rewind());
         }
     }
@@ -276,6 +277,7 @@ public class HeadScript : MonoBehaviour {
             grabbedObject.SetActive(true);
             grabbedObject.transform.position = transform.position;
             grabbedObject.GetComponent<IGrabbable>().Throw((Vector3)direction, throwStrength);
+            grabbedObject = null;
         }
         else {
             Debug.Log("Wait what");
