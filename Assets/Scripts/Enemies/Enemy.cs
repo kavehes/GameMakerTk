@@ -10,8 +10,8 @@ public class Enemy : MonoBehaviour, IGrabbable {
     public float Speed = 3;
     public Collider2D stickedCollider;
     int side = 0;
+    int size = 1;
     public LayerMask wallLayer;
-    public ContactFilter2D contactFilter;
 
     Vector2 lastNormal;
     Vector3 stickedLastPosition;
@@ -79,6 +79,10 @@ public class Enemy : MonoBehaviour, IGrabbable {
         rigid.gravityScale = 1;
     }
 
+    public int getSize() {
+        return size;
+    }
+
     protected bool hasSomethingInFront() {
         return (Physics2D.OverlapPoint(transform.position + moveVector.normalized * 0.22f) != null);
     }
@@ -116,7 +120,7 @@ public class Enemy : MonoBehaviour, IGrabbable {
             }
         }
 
-        if (found == -1) {
+        if (found == -1 || stickedCollider.Distance(collider).distance>collider.bounds.size.magnitude) {
             stickedCollider = null;
             lastNormal = new Vector2();
             rigid.gravityScale = 1;
@@ -145,10 +149,10 @@ public class Enemy : MonoBehaviour, IGrabbable {
     }
 
     void OnCollisionExit2D(Collision2D coll) {
-        if (coll.collider == stickedCollider) {
+        /*if (coll.collider == stickedCollider) {
             stickedCollider = null;
             rigid.gravityScale = 1;
-        }
+        }*/
     }
 
     //Actions

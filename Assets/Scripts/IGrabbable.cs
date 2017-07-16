@@ -9,4 +9,5 @@ interface IGrabbable {
     void UnGrab();
     void Bite(float damage);
     void Throw(Vector3 direction, float strength);
+    int getSize();
 }
