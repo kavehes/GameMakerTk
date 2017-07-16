@@ -23,7 +23,7 @@ public class AimCursor : MonoBehaviour {
                 lama.cursor = this;
             }
         }
-        offset = Vector2.left * 2;
+        offset = Vector2.up * 2;
     }
 
     public Vector2 aimDirection() {

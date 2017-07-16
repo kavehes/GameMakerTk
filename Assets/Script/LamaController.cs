@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LamaController : MonoBehaviour {
+public class LamaController : MonoBehaviour , IHittable {
     
     public enum HeadState {
         Attached,
@@ -47,6 +47,8 @@ public class LamaController : MonoBehaviour {
     public int equilibre = 5;
     public AimCursor cursor;
 
+    bool cooldown;
+
     public bool FacingRight = false;
 
 
@@ -60,13 +62,14 @@ public class LamaController : MonoBehaviour {
         ledging = Physics2D.OverlapCircle(wallChecker.position, feetRadius, groundLayer) && !Physics2D.OverlapCircle(ledgeChecker.position, feetRadius, groundLayer);
 
         if (grounded) {
-            rigid.velocity =new Vector2(Input.GetAxis("Horizontal_P" + playerNumber)*Speed, rigid.velocity.y);
+            if(!cooldown)
+                rigid.velocity =new Vector2(Input.GetAxis("Horizontal_P" + playerNumber)*Speed, rigid.velocity.y);
             switch (headState) {
                 case HeadState.Launched:
                     if (CanWalkOnLaunch) {
                         headScript.ShortenDistance(Mathf.Max(0, Input.GetAxis("Vertical_P" + playerNumber) * Time.deltaTime) * UpDownSpeed);
                     }
-                    else rigid.velocity = Vector2.zero;
+                    else if(!cooldown) rigid.velocity = Vector2.zero;
                     break;
                 case HeadState.Grabbing:
                     headScript.ShortenDistance(Mathf.Max(0, Input.GetAxis("Vertical_P" + playerNumber) * Time.deltaTime) * UpDownSpeed);
@@ -142,6 +145,40 @@ public class LamaController : MonoBehaviour {
                 break;
         }
 	}
+
+    IEnumerator Cooldown() {
+        yield return new WaitForSeconds(2f);
+        Debug.Log("Please Proceed");
+        cooldown = false;
+        rigid.gravityScale = 1f;
+    }
+
+    void KnockBack(float HitStrength) {
+        StartCoroutine(Cooldown());
+        cooldown = true;
+        rigid.AddForce((Vector3.right + Vector3.up)*HitStrength);
+        rigid.gravityScale = 0.5f;
+        grounded = false;
+    }
+
+    public void Hit(int candyS, GameObject obj) {
+        switch (candyS) {
+            case 1:
+                KnockBack(30000);
+                break;
+            case 2:
+                KnockBack(150000);
+                break;
+            case 3:
+                KnockBack(300000);
+                break;
+            case 4:
+                KnockBack(3000000);
+                break;
+
+        }
+    }
+
 
     void Swing() {
         rigid.AddForce(new Vector2(Input.GetAxis("Horizontal_P" + playerNumber) * balanceStrength, 0));
