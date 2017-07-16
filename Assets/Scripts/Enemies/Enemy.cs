@@ -22,6 +22,7 @@ public class Enemy : MonoBehaviour, IGrabbable {
 
     protected float moveSide = 1;
     protected Vector3 moveVector = new Vector3(1, 0);
+    protected bool right = true;
 
     protected bool grabbed = false;
     protected GameObject grabbingObject = null;
@@ -32,6 +33,7 @@ public class Enemy : MonoBehaviour, IGrabbable {
     protected Action grabReaction;
 
     bool changed = false;
+    float collTimer = 0;
 
     // Use this for initialization
     protected void Start () {
@@ -43,6 +45,7 @@ public class Enemy : MonoBehaviour, IGrabbable {
 
     // Update is called once per frame
     protected void FixedUpdate() {
+        collTimer += Time.deltaTime;
         changed = false;
         if (!thrown && currentAction != null)
             currentAction();
@@ -79,6 +82,7 @@ public class Enemy : MonoBehaviour, IGrabbable {
 
     public virtual void Throw(Vector3 direction, float strength) {
         rigid.AddForce(direction * strength, ForceMode2D.Force);
+        rigid.AddTorque(5);
         thrown = true;
         rigid.gravityScale = 1;
     }
@@ -92,10 +96,11 @@ public class Enemy : MonoBehaviour, IGrabbable {
     }
 
     protected void Flip() {
-        moveSide *= -1;
+        moveVector *= -1;
         Vector3 newScale = transform.localScale;
         newScale.x *= -1;
         transform.localScale = newScale;
+        right = !right;
     }
 
     void SetDirection(int side) {
@@ -107,9 +112,13 @@ public class Enemy : MonoBehaviour, IGrabbable {
         if (stickedCollider != null) {
             float movement = Speed;
             rigid.velocity = (Vector2)moveVector * movement;
-            Collider2D col = Physics2D.OverlapPoint(collider.bounds.center + transform.right * collider.bounds.size.magnitude);
+            Collider2D col = Physics2D.OverlapPoint(collider.bounds.center + moveVector * collider.bounds.size.magnitude);
             if (col != null && (1 << col.gameObject.layer & wallLayer.value) != 0)
                 StickToCollider(false, true);
+            else if (col != null) {
+                Debug.Log("flip");
+                Flip();
+            }
         }
     }
 
@@ -124,7 +133,7 @@ public class Enemy : MonoBehaviour, IGrabbable {
             return;
         Vector2 direction;
         if (!front) direction = ((Vector2)stickedCollider.bounds.center - origin);
-        else direction = transform.right;
+        else direction = (right?transform.right:-transform.right);
         float distance = Vector3.Distance(origin, stickedCollider.bounds.center);
         RaycastHit2D[] hit = Physics2D.RaycastAll(origin,direction, distance, wallLayer);
         int found = -1;
@@ -148,14 +157,21 @@ public class Enemy : MonoBehaviour, IGrabbable {
 
         float rot_z = Mathf.Atan2(hit[found].normal.y, hit[found].normal.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
-        moveVector = Quaternion.Euler(0f, 0f, rot_z - 90) * Vector3.right;
+        moveVector = Quaternion.Euler(0f, 0f, rot_z - 90) * (right?Vector3.right:-Vector3.right);
         rigid.MovePosition(hit[found].point);
         lastNormal = hit[found].normal;
     }
 
 
     void OnCollisionEnter2D(Collision2D coll) {
-        if((wallLayer.value & 1<<coll.collider.gameObject.layer) != 0) {
+        IHittable hitted = coll.gameObject.GetComponent<IHittable>();
+        if (hitted != null && thrown) {
+            hitted.Hit(size);
+            thrown = false;
+        }
+        else if((wallLayer.value & 1<<coll.collider.gameObject.layer) != 0 && collTimer>0.5f) {
+            Debug.Log("collide");
+            changed = true;
             stickedCollider = coll.collider;
             stickedLastPosition = stickedCollider.transform.position;
             stickedLastRotation = stickedCollider.transform.rotation;
@@ -163,11 +179,12 @@ public class Enemy : MonoBehaviour, IGrabbable {
             //StickToCollider(false);
             //Debug.Log("Sticked collider: " + coll.gameObject);
             thrown = false;
+            collTimer = 0;
         }
     }
 
     void OnCollisionExit2D(Collision2D coll) {
-        if (coll.collider == stickedCollider) {
+        if (coll.collider == stickedCollider && collTimer>0.5f) {
             stickedCollider = null;
             rigid.gravityScale = 1;
         }
