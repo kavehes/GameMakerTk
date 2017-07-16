@@ -1,19 +1,23 @@
 fileFormatVersion: 2
-guid: a8497e419837ee843ad2a871ef65e12d
-timeCreated: 1500218086
+guid: 5dc7557de0c7b434982fd8520458e231
+timeCreated: 1500218270
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: lama_corps-idle_0
-    21300002: lama_corps-idle_1
-    21300004: lama_corps-idle_2
-    21300006: lama_corps-idle_3
-    21300008: lama_corps-idle_4
-    21300010: lama_corps-idle_5
-    21300012: lama_corps-idle_6
-    21300014: lama_corps-idle_7
-    21300016: lama_corps-idle_8
-    21300018: lama_corps-idle_9
+    21300000: lama_corps_chute_0
+    21300002: lama_corps_chute_1
+    21300004: lama_corps_chute_2
+    21300006: lama_corps_chute_3
+    21300008: lama_corps_chute_4
+    21300010: lama_corps_chute_5
+    21300012: lama_corps_chute_6
+    21300014: lama_corps_chute_7
+    21300016: lama_corps_chute_8
+    21300018: lama_corps_chute_9
+    21300020: lama_corps_chute_10
+    21300022: lama_corps_chute_11
+    21300024: lama_corps_chute_12
+    21300026: lama_corps_chute_13
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -96,12 +100,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: lama_corps-idle_0
+      name: lama_corps_chute_0
       rect:
         serializedVersion: 2
-        x: 1
+        x: 0
         y: 0
-        width: 56
+        width: 79
         height: 63
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -109,12 +113,12 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: lama_corps-idle_1
+      name: lama_corps_chute_1
       rect:
         serializedVersion: 2
-        x: 64
+        x: 79
         y: 0
-        width: 56
+        width: 79
         height: 63
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -122,12 +126,12 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: lama_corps-idle_2
+      name: lama_corps_chute_2
       rect:
         serializedVersion: 2
-        x: 127
+        x: 158
         y: 0
-        width: 56
+        width: 79
         height: 63
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -135,12 +139,12 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: lama_corps-idle_3
+      name: lama_corps_chute_3
       rect:
         serializedVersion: 2
-        x: 190
+        x: 237
         y: 0
-        width: 56
+        width: 79
         height: 63
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -148,25 +152,12 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: lama_corps-idle_4
-      rect:
-        serializedVersion: 2
-        x: 253
-        y: 0
-        width: 56
-        height: 63
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: lama_corps-idle_5
+      name: lama_corps_chute_4
       rect:
         serializedVersion: 2
         x: 316
         y: 0
-        width: 56
+        width: 79
         height: 63
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -174,12 +165,12 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: lama_corps-idle_6
+      name: lama_corps_chute_5
       rect:
         serializedVersion: 2
-        x: 379
+        x: 395
         y: 0
-        width: 56
+        width: 79
         height: 63
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -187,12 +178,12 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: lama_corps-idle_7
+      name: lama_corps_chute_6
       rect:
         serializedVersion: 2
-        x: 442
+        x: 474
         y: 0
-        width: 56
+        width: 79
         height: 63
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -200,12 +191,12 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: lama_corps-idle_8
+      name: lama_corps_chute_7
       rect:
         serializedVersion: 2
-        x: 505
+        x: 553
         y: 0
-        width: 56
+        width: 79
         height: 63
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -213,12 +204,77 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: lama_corps-idle_9
+      name: lama_corps_chute_8
       rect:
         serializedVersion: 2
-        x: 567
+        x: 632
         y: 0
-        width: 63
+        width: 79
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: lama_corps_chute_9
+      rect:
+        serializedVersion: 2
+        x: 711
+        y: 0
+        width: 79
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: lama_corps_chute_10
+      rect:
+        serializedVersion: 2
+        x: 790
+        y: 0
+        width: 79
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: lama_corps_chute_11
+      rect:
+        serializedVersion: 2
+        x: 869
+        y: 0
+        width: 79
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: lama_corps_chute_12
+      rect:
+        serializedVersion: 2
+        x: 948
+        y: 0
+        width: 79
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: lama_corps_chute_13
+      rect:
+        serializedVersion: 2
+        x: 1027
+        y: 0
+        width: 79
         height: 63
       alignment: 0
       pivot: {x: 0, y: 0}
