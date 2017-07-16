@@ -81,7 +81,7 @@ public class Enemy : MonoBehaviour, IGrabbable {
     }
 
     public virtual void Throw(Vector3 direction, float strength) {
-        rigid.AddForce(direction * strength, ForceMode2D.Impulse);
+        rigid.AddForce(direction * strength, ForceMode2D.Force);
         thrown = true;
         rigid.gravityScale = 1;
     }

@@ -8,7 +8,7 @@ public class HeadScript : MonoBehaviour {
 
     List<Vector2> CollidingPoint = new List<Vector2>();
 
-    List<DistanceJoint2D> NeckNodes = new List<DistanceJoint2D>();
+    public List<DistanceJoint2D> NeckNodes = new List<DistanceJoint2D>();
     public GameObject Body;
     LamaController lama;
 
@@ -48,21 +48,24 @@ public class HeadScript : MonoBehaviour {
         }
         else if(headState() != LamaController.HeadState.Attached){
             SimplifyJoints();
-            for (int i = 0; i < NeckNodes.Count - 1; i++) {
-                Transform childPos = NeckNodes[i].connectedBody.transform;
-                RaycastHit2D rchit = Physics2D.Raycast(NeckNodes[i].transform.position, (childPos.position - NeckNodes[i].transform.position).normalized, (childPos.position - NeckNodes[i].transform.position).magnitude, layersToCheck);
+            if (headState() != LamaController.HeadState.CommingBack) {
+                for (int i = 0; i < NeckNodes.Count - 1; i++) {
+                    Transform childPos = NeckNodes[i].connectedBody.transform;
+                    RaycastHit2D rchit = Physics2D.Raycast(NeckNodes[i].transform.position, (childPos.position - NeckNodes[i].transform.position).normalized, (childPos.position - NeckNodes[i].transform.position).magnitude, layersToCheck);
 
-                if (rchit.collider != null && rchit.collider.gameObject != childPos.gameObject) {
-                    CreateJoint(i + 1, rchit.point, getRectOffset(rchit.collider, rchit.point));
-                    break;
+                    if (rchit.collider != null && rchit.collider.gameObject != childPos.gameObject) {
+                        CreateJoint(i + 1, rchit.point, getRectOffset(rchit.collider, rchit.point));
+                        break;
+                    }
                 }
-            }
-            RaycastHit2D hit = Physics2D.Raycast(NeckNodes[NeckNodes.Count - 1].transform.position, Body.transform.position - NeckNodes[NeckNodes.Count - 1].transform.position, (Body.transform.position - NeckNodes[NeckNodes.Count - 1].transform.position).magnitude, layersToCheck);
 
-            if (hit.collider != null && hit.collider.gameObject != Body) {
-                CreateJoint(NeckNodes.Count, hit.point, getRectOffset(hit.collider, hit.point));
-                NeckNodes[NeckNodes.Count - 1].anchor = NeckNodes[NeckNodes.Count - 2].anchor;
-                NeckNodes[NeckNodes.Count - 2].anchor = Vector2.zero;
+                RaycastHit2D hit = Physics2D.Raycast(NeckNodes[NeckNodes.Count - 1].transform.position, Body.transform.position - NeckNodes[NeckNodes.Count - 1].transform.position, (Body.transform.position - NeckNodes[NeckNodes.Count - 1].transform.position).magnitude, layersToCheck);
+
+                if (hit.collider != null && hit.collider.gameObject != Body) {
+                    CreateJoint(NeckNodes.Count, hit.point, getRectOffset(hit.collider, hit.point));
+                    NeckNodes[NeckNodes.Count - 1].connectedAnchor = NeckNodes[NeckNodes.Count - 2].connectedAnchor;
+                    NeckNodes[NeckNodes.Count - 2].connectedAnchor = Vector2.zero;
+                }
             }
 
             if (headState() == LamaController.HeadState.CommingBack || headState() == LamaController.HeadState.Launched) {
@@ -107,6 +110,10 @@ public class HeadScript : MonoBehaviour {
         CollidingPoint.RemoveAt(index - 1);
     }
 
+    public void EnableJoint(bool b) {
+        NeckNodes[0].enabled = b;
+    }
+
     /// <summary>
     /// Delete the last joint
     /// </summary>
@@ -136,7 +143,7 @@ public class HeadScript : MonoBehaviour {
         v = point -(Vector2) obj.transform.position;
         v = new Vector2(Mathf.Sign(v.x), Mathf.Sign(v.y));
         
-        return v*0.3f;
+        return v*0.4f;
     }
 
     /// <summary>
@@ -165,7 +172,8 @@ public class HeadScript : MonoBehaviour {
                 Destroy(NeckNodes[i + 1].gameObject);
                 NeckNodes.RemoveAt(i + 1);
                 CollidingPoint.RemoveAt(i);
-            }
+                Debug.Log("Simplify 1");
+                }
         }
         //Last case
         if (NeckNodes.Count > 2) {
@@ -176,6 +184,7 @@ public class HeadScript : MonoBehaviour {
                 Destroy(NeckNodes[ii + 1].gameObject);
                 NeckNodes.RemoveAt(ii + 1);
                 CollidingPoint.RemoveAt(ii);
+                Debug.Log("Simplify 2");
             }
         }
 
@@ -186,6 +195,7 @@ public class HeadScript : MonoBehaviour {
                 Destroy(NeckNodes[i].gameObject);
                 NeckNodes.RemoveAt(i);
                 CollidingPoint.RemoveAt(i - 1);
+                Debug.Log("Simplify 3");
             }
         }
         if(NeckNodes[0].distance < 0.1f && NeckNodes.Count > 1) {
@@ -194,6 +204,7 @@ public class HeadScript : MonoBehaviour {
             Destroy(NeckNodes[1].gameObject);
             NeckNodes.RemoveAt(1);
             CollidingPoint.RemoveAt(0);
+            Debug.Log("Simplify 4");
         }
     }
 
@@ -212,6 +223,7 @@ public class HeadScript : MonoBehaviour {
             StartCoroutine(Rewind());
         }
     }
+
     /// <summary>
     /// Eat an ennemy
     /// </summary>
@@ -299,7 +311,7 @@ public class HeadScript : MonoBehaviour {
 
         }
         for(int i = 0; i < CollidingPoint.Count; i++) {
-            Gizmos.DrawSphere(CollidingPoint[i], 0.5f);
+            Gizmos.DrawSphere(CollidingPoint[i], 0.1f);
         }
     }
 
