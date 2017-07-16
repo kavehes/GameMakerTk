@@ -117,6 +117,7 @@ public class LamaController : MonoBehaviour , IHittable {
                 if (Input.GetButtonDown("A_P" + playerNumber)) {
                     head.GetComponent<Rigidbody2D>().AddForce((cursor.transform.position - neckStart.transform.position).normalized * headLaunchForce);
                     head.GetComponent<Rigidbody2D>().gravityScale = 1;
+                    AkSoundEngine.PostEvent("Play_Lancer", gameObject);
                     headScript.EnableJoint(true);
                     headState = HeadState.Launched;
                 }

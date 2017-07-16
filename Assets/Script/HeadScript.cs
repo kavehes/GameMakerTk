@@ -82,6 +82,7 @@ public class HeadScript : MonoBehaviour {
 
                     NeckNodes[NeckNodes.Count - 1].distance = maxDistance - GetDistance(0, NeckNodes.Count - 1);
                     NeckNodes[NeckNodes.Count - 1].distance = Mathf.Clamp(NeckNodes[NeckNodes.Count - 1].distance, lama.neckSize, lama.neckMaxLength);
+
                     if (GetDistance(0, NeckNodes.Count) <= lama.neckSize * 2f) {
                         Debug.Log("Ungrabbing");
                         foreach (CircleCollider2D c in cc) {
@@ -91,6 +92,14 @@ public class HeadScript : MonoBehaviour {
                         lama.headState = LamaController.HeadState.CommingBack;
                         StartCoroutine(Rewind());
                     }
+                    if(NeckNodes.Count == 1) {
+                        Debug.Log(lama.GetComponent<Rigidbody2D>().velocity);
+                        Vector3 direction = lama.transform.position - NeckNodes[0].transform.position + (Vector3)lama.GetComponent<Rigidbody2D>().velocity*100;
+                        direction = Quaternion.FromToRotation(direction, direction + Vector3.down) * direction;
+                        if (direction.magnitude > NeckNodes[0].distance)
+                            lama.transform.position = NeckNodes[0].transform.position + direction.normalized * NeckNodes[0].distance;
+                    }
+                    maxDistance = Mathf.Clamp(maxDistance, lama.neckSize, lama.neckMaxLength);
                 }
                 else {
                     Debug.LogError("No grabedObject");
@@ -251,6 +260,7 @@ public class HeadScript : MonoBehaviour {
     /// </summary>
     public bool Eat() {
         if (grabbedObject != null) {
+            AkSoundEngine.PostEvent("Play_Gobe", gameObject);
             grabbedObject.GetComponent<IGrabbable>().Bite(10f);
             grabbedObject.SetActive(false);
             return true;           
@@ -262,6 +272,7 @@ public class HeadScript : MonoBehaviour {
     public void Throw(Vector2 direction) {
         if(grabbedObject != null) {
             Debug.Log("Throwing stuff");
+            AkSoundEngine.PostEvent("Play_Spit", gameObject);
             grabbedObject.SetActive(true);
             grabbedObject.transform.position = transform.position;
             grabbedObject.GetComponent<IGrabbable>().Throw((Vector3)direction, throwStrength);
